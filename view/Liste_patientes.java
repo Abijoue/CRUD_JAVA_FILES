@@ -53,7 +53,7 @@ public class Liste_patientes extends JFrame implements ActionListener, MouseList
 	private static final long serialVersionUID = 1L;
 	
 	JFrame cadre ;
-	JButton  add , modify , deleat , home , detail ,add_detail;
+	JButton  add , modify , deleat , home , detail ,add_detail , add_rv;
  	JPanel Paneau_Center,Paneau_West,Paneau_North , Paneau_Titile ,Paneau_buttons , Paneau_infoArea ,Paneau_East;
  	JLabel image_Title;
  	JTable table;
@@ -153,20 +153,19 @@ public class Liste_patientes extends JFrame implements ActionListener, MouseList
  		detail.setBackground(Color.WHITE);
  		detail.setPreferredSize(new Dimension(60, 60)); 
  		detail.addActionListener(this);
- 		//
-// 		ImageIcon add_det_img = new ImageIcon("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\img\\add_det_img.png");
-// 		add_detail = new JButton("",add_det_img);	
-// 		add_detail.setBackground(Color.WHITE);
-// 		add_detail.setPreferredSize(new Dimension(60, 60)); 
-// 		add_detail.addActionListener(this);
- 		//
+ 		
+ 		ImageIcon img_rv_add = new ImageIcon("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\img\\img_rv_add.jpg");
+ 		add_rv = new JButton("",img_rv_add);	
+ 		add_rv.setBackground(Color.WHITE);
+ 		add_rv.addActionListener(this);
+ 		
  		Paneau_buttons.add(add); 
  		Paneau_buttons.add(modify);
  		Paneau_buttons.add(deleat); 
  		Paneau_buttons.add(home); 
  		//
  		Paneau_East.add(detail);
-// 		Paneau_East.add(add_detail);
+ 		Paneau_East.add(add_rv);
  		Paneau_East.setVisible(false);
 
  	}
@@ -241,13 +240,13 @@ public class Liste_patientes extends JFrame implements ActionListener, MouseList
  		
 		this.setTitle("Liste patientes");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(Ecran.width-150,Ecran.height-150);
+		this.setSize(Ecran.width-150,Ecran.height-120);
 		this.setLocationRelativeTo(null);
 		this.getContentPane().setLayout(new BorderLayout());
 		//panel
 		initPanel();
 		initJTextField();
-		initPatientElements();
+		initPatientElements(); 
 		this.getContentPane().add(Paneau_North,BorderLayout.NORTH);
 		this.getContentPane().add(Paneau_Center,BorderLayout.CENTER);
 		this.getContentPane().add(Paneau_East,BorderLayout.SOUTH);
@@ -282,13 +281,20 @@ public class Liste_patientes extends JFrame implements ActionListener, MouseList
 	            //	System.out.println(deleatingFile.getAbsolutePath());
 	            	            		
 	            		File file = new File("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Patients\\"+value+".txt");
+	            		File directory = new File("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Dossier\\"+value);
+
 	            		System.out.println(file.getAbsolutePath());
 	            		if(file.delete()){
 	            			System.out.println(file.getName() + " is deleted!");
 	            		}else{
 	            			System.out.println("Delete operation is failed.");
 	            		}
-	                	System.out.println(file.exists());
+	                	//System.out.println(file.exists());
+	            		try {
+							delete(directory);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 
 	               JOptionPane.showMessageDialog(null, "La ligne sélectionnée a été supprimée");
 	            }else {
@@ -346,9 +352,9 @@ public class Liste_patientes extends JFrame implements ActionListener, MouseList
 		     String directoryPath = "C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Dossier\\"+textId.getText();
 
 		        File file = new File(directoryPath);
-		        System.out.println(file.getAbsolutePath());
+//		        System.out.println(file.getAbsolutePath());
 		        if (file.mkdir()) {
-					System.out.println("directory created ***");
+//					System.out.println("directory created ***");
 				} else {
 					System.out.println("folder already exist");
 				}
@@ -366,7 +372,56 @@ public class Liste_patientes extends JFrame implements ActionListener, MouseList
 				e1.printStackTrace();
 			}
 		}
+		if(e.getSource() == add_rv) {
+			String cin = textId.getText().trim();
+			
+			/***** create patient folder if not exist *****/
+			
+		     String directoryPath = "C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Rendez-vous";
+
+		        File file = new File(directoryPath);
+		        file.mkdir();
+		    /*******************************************/
+		        System.out.println("Add appointment");
+			ajouter_rv rv = new ajouter_rv(cin);
+			rv.setVisible(true);
+
+		}
 	}
+	
+    public static void delete(File file) throws IOException{
+			 
+	    	if(file.isDirectory()){
+	    		//directory is empty, then delete it
+	    		if(file.list().length==0){
+	    			
+	    		   file.delete();
+	    		   System.out.println("Directory is deleted : "+ file.getAbsolutePath());
+	    			
+	    		}else{
+	    			
+	    		   //list all the directory contents
+	        	   String files[] = file.list();
+	     
+	        	   for (String temp : files) {
+	        	      //construct the file structure
+	        	      File fileDelete = new File(file, temp);
+	        	      //recursive delete
+	        	     delete(fileDelete);
+	        	   }
+	        	   //check the directory again, if empty then delete it
+	        	   if(file.list().length==0){
+	           	     file.delete();
+	        	     System.out.println("Directory is deleted : "+ file.getAbsolutePath());
+	        	   }
+	    		}
+	    	}else{
+	    		//if file, then delete it
+	    		file.delete();
+	    		System.out.println("File is deleted : " + file.getAbsolutePath());
+	    	}
+	 }
+		
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {

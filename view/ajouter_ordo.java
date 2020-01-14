@@ -3,6 +3,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -41,7 +42,7 @@ public class ajouter_ordo extends JFrame implements ActionListener {
 	JLabel title ;
  	JPanel Pcenter , Psouth;
  	
- 	void initPanel(){
+ 	void initPanel(){ 
  		Pcenter = new JPanel();
  		Psouth = new JPanel();
  		
@@ -208,6 +209,9 @@ public class ajouter_ordo extends JFrame implements ActionListener {
 	       doc.add(date_p);    
 
 		   doc.close();
+		   
+		   File myFile = new File("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Dossier\\"+cin.trim()+"\\Ordonnance.pdf");
+	        Desktop.getDesktop().open(myFile);
 
 	}
 	

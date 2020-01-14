@@ -40,7 +40,7 @@ public class ajouter_data extends JFrame implements ActionListener {
 		JButton  add , add_money , detail , home , decore , add_ordonance , add_certeficat ;
 	 	JPanel Paneau_Center,Paneau_West,Paneau_North , Paneau_Titile ,Paneau_buttons , Paneau_infoArea ,Paneau_south;
 	 	JLabel image_Title , textId , textFname , textLname ,textAge ,textEmail ,textSexe ,textTel;
-	 	JTextArea textActes , textpaiment , textHistorique , textcerteficat;
+	 	JTextArea textActes , textpaiment , textHistorique , textRendez_vous;
 	 	
 	 	
 	 	public void initPanel() {
@@ -111,11 +111,12 @@ public class ajouter_data extends JFrame implements ActionListener {
 	 		    int i = 0;
 				while (sc.hasNext()) {
 	 		    	temp2 = sc.next();
-		 		    	if(i%10 == 0){
+		 		    	if(i%8 == 0){
 			 		    	List.add(temp2);
 		 		    	}
 		 		    	i++;
 	 		    }
+				System.out.println(List);
 				Double somme = 0.0 ;
 				for (String s : List) {
 						somme = somme + Double.parseDouble(s);
@@ -193,14 +194,33 @@ public class ajouter_data extends JFrame implements ActionListener {
 		 		    	Files.deleteIfExists(Paths.get("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Dossier\\"+p.getCin().trim()+"\\Avance.txt")); 
 		 		    	Files.deleteIfExists(Paths.get("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Dossier\\"+p.getCin().trim()+"\\Actes.txt"));
 		 		    	Files.deleteIfExists(Paths.get("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Dossier\\"+p.getCin().trim()+"\\Paiments.txt"));
-//----------------------------------------------------------------//--------------------------------/-/-/-/----------
 		 		    }
+//----------------------------------------------------------------//--------------------------------/-/-/-/----------
 
-			 textcerteficat = new JTextArea() ;  textcerteficat.setBackground(new Color(255,255,204));
+		 	    textRendez_vous = new JTextArea() ;  textRendez_vous.setBackground(new Color(255,255,204));
+		    	File file_rv = new File("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Dossier\\"+p.getCin().trim()+"\\RV.txt");
+		    	
+	    		String rv_string = "Pas de rendez-vous ";
+
+		    	if(file_rv.exists()) {
+		    		rv_string = "";
+			    	sc = new Scanner(file_rv); 
+		 		    while (sc.hasNextLine()) {
+		 		    	rv_string = rv_string+sc.nextLine() + "\n";
+		 		    }
+			 		   sc.close();
+
+		    	}
+		    	
+	 		   textRendez_vous.setText(rv_string);
+	 		   textRendez_vous.setFont(new Font("SansSerif", Font.PLAIN, 12));
+	 		   
+//-/-----------------/-/-/-/-----------------------------------------------------------------------------------------
+
 			 Paneau_Center.add(textActes); 
 			 Paneau_Center.add(textpaiment);
 			 Paneau_Center.add(textHistorique);
-			 Paneau_Center.add(textcerteficat);
+			 Paneau_Center.add(textRendez_vous);
 	 	}
 	 	public void initLabel(Patient p) {
 	 		ImageIcon image = new ImageIcon("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\img\\Dental-logo.jpg");
@@ -248,7 +268,13 @@ public class ajouter_data extends JFrame implements ActionListener {
 	 		ImageIcon acte_image_delete = new ImageIcon("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\img\\zoom.png");
 	 		detail = new JButton("",acte_image_delete);		
 	 		detail.setBackground(Color.WHITE);
-	 		detail.addActionListener(this);
+	 		detail.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					tooth_list th = new tooth_list(p.getCin());
+					th.setVisible(true);
+				}
+			});
 
 	 		//
 	 		ImageIcon home_img = new ImageIcon("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\img\\home.jpg");
@@ -323,7 +349,7 @@ public class ajouter_data extends JFrame implements ActionListener {
 		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
+			 
 			if(e.getSource() == home) {
 				home h = new home();
 				h.setVisible(true);

@@ -9,6 +9,8 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -55,7 +57,7 @@ public class ajouter_mony extends JFrame implements ActionListener {
 					}else {
 				        JOptionPane.showMessageDialog(null, "remplire le champ SVP");
 
-					}
+					} 
 				}
 			}
 		});
@@ -109,6 +111,7 @@ public class ajouter_mony extends JFrame implements ActionListener {
 			}
 	}
 	
+	@SuppressWarnings("unused")
 	public void FileWriter(String name , String somme) throws IOException 
 	{
 	    String fileContent_avance = somme;
@@ -126,6 +129,29 @@ public class ajouter_mony extends JFrame implements ActionListener {
 	               
 	    } catch (IOException e) {
 	        e.printStackTrace();
+	    }
+	    
+	    //-------------- Revenu File
+	    LocalDate date = LocalDate.now();
+	    Scanner sc ;
+	    File file_revenu = new File("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Revenus\\"+date+"txt");
+	    file_revenu.createNewFile();
+	    
+	    if(file_revenu.length() == 0 ) {
+	    	  FileWriter writer = new FileWriter(file_revenu);
+	          writer.write(somme);
+	          writer.close();
+	    }else {
+ 		    sc = new Scanner(file_revenu); 
+ 		    String temp = "";
+			while (sc.hasNext()) {
+ 		    	temp = sc.next();
+ 		    }
+			Double resultat = 0.0 ;
+			resultat = Double.parseDouble(temp) + Double.parseDouble(somme);
+			FileWriter writer = new FileWriter(file_revenu);
+	          writer.write(resultat.toString());
+	          writer.close();
 	    }
 	  
 	}

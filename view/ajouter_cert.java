@@ -3,6 +3,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -212,6 +213,8 @@ public class ajouter_cert extends JFrame implements ActionListener {
 
 		   doc.close();
 
+		   File myFile = new File("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Dossier\\"+cin.trim()+"\\certificat.pdf");
+	        Desktop.getDesktop().open(myFile);
 	}
 	
 	}

@@ -5,7 +5,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class home extends JFrame implements ActionListener  {
 	/**
@@ -14,14 +24,13 @@ public class home extends JFrame implements ActionListener  {
 	private static final long serialVersionUID = 1L;
 	
 	JFrame cadre ;
-	JButton  List_pat , List_rv , list_stat ;
- 	JPanel Paneau_Center,Paneau_West,Paneau_North , Paneau_Titile ,Paneau_buttons , Paneau_infoArea ,Paneau_infoArea_title , Paneau_infoArea_list,Paneau_bottom;
+	JButton  List_pat , List_rv , list_stat , nbr_rdv , date_disp , rev;
+ 	JPanel Paneau_Center,Paneau_West,Paneau_North , Paneau_Titile ,Paneau_buttons , Paneau_infoArea ,Paneau_South;
  	JLabel image_Title;
- 	JTextArea Student , Professors , Administrator;
  	
  	
  	public void initPanel() {
- 		
+ 		 
  		Paneau_North = new JPanel();	
  		Paneau_West = new JPanel();	
  		Paneau_Center = new JPanel();
@@ -40,18 +49,17 @@ public class home extends JFrame implements ActionListener  {
 //filed  panel 	
  		Paneau_infoArea = new JPanel();
  		Paneau_infoArea.setLayout(new BorderLayout());
- 		Paneau_infoArea_title = new JPanel();
- 		Paneau_infoArea_title.setLayout(new GridLayout(1,3));
- 		//list
- 		Paneau_infoArea_list  = new JPanel();
- //		Paneau_infoArea_list.setLayout(new GridLayout(10,3,9,9));
-/*
- 		Paneau_infoArea.add(Paneau_infoArea_title,BorderLayout.NORTH);
- 		Paneau_infoArea.add(Paneau_infoArea_list,BorderLayout.CENTER);
- */	
+ 		
+ 		
  		Paneau_Center.add(Paneau_infoArea);
+ 		Paneau_Center.setLayout(new BorderLayout());
  		Paneau_Center.setBackground(new Color(240,250,240)); //Soft green color
  		
+ 		Paneau_South = new JPanel();
+ 		Paneau_South.setLayout(new GridLayout(1, 2));
+ 		Paneau_South.setBackground(new Color(240,250,240)); //Soft green color
+
+
  	}
  	public void initLabel() {
  		ImageIcon image = new ImageIcon("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\img\\Dental-logo.jpg");
@@ -59,7 +67,7 @@ public class home extends JFrame implements ActionListener  {
  		Paneau_Titile.add(image_Title);
  	}
  	
- 	public void initButtons() {
+ 	public void initButtons() throws IOException {
  		ImageIcon pat_img = new ImageIcon("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\img\\img_pat.jfif");
  		List_pat = new JButton("Liste des patients",pat_img);		
  		List_pat.setPreferredSize(new Dimension(200, 90)); 
@@ -79,11 +87,57 @@ public class home extends JFrame implements ActionListener  {
  		list_stat.setForeground(Color.BLACK);
  		list_stat.setBackground(Color.WHITE);
  		list_stat.addActionListener(this);
+ 		//
+		LocalDate now = LocalDate.now();
+		String d = now.toString();
+		List<String> result = null;
+		 try (Stream<Path> walk = Files.walk(Paths.get("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Rendez-vous\\"+d))) {
 
+	     		 result = walk.filter(Files::isRegularFile)
+	     				.map(x -> x.toString()).collect(Collectors.toList());
+	     		
+		 } catch (IOException e) {
+			e.printStackTrace();
+		}
+		 int size = result.size();
+ 		ImageIcon nbr_rdv_img = new ImageIcon("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\img\\img_pat.jfif");
+ 		nbr_rdv = new JButton("Nombre des rendez vour Aujourd'hui : "+size,nbr_rdv_img);		
+ 		nbr_rdv.setForeground(Color.BLACK);
+ 		nbr_rdv.setBackground(Color.WHITE);
+ 		////
+ 		ImageIcon img_date = new ImageIcon("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\img\\img_date.PNG");
+ 		date_disp = new JButton("La date d'aujourd'hui :"+d,img_date);	
+ 		date_disp.setForeground(Color.BLACK);
+ 		date_disp.setBackground(Color.WHITE);
+ 		////
+ 		
+ 		File file_rev = new File("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\DB\\Revenus\\"+now.toString()+".txt");
+ 		file_rev.createNewFile();
+ 		String mony = "0";
+ 		Scanner sc;
+ 		if(file_rev.exists() == true) {
+ 			sc = new Scanner(file_rev); 
+ 		    while (sc.hasNext()) {
+ 		    	mony =sc.next();
+ 		    	System.out.println(mony);
+
+ 		    }
+ 		 	sc.close(); 
+	 	 }
+ 		ImageIcon img_revenu = new ImageIcon("C:\\Users\\The_ghost\\eclipse-workspace\\Cabinet dentaire\\src\\img\\revenue.PNG");
+ 		rev = new JButton("Le revenue d'aujourd'hui :"+mony+" DH",img_revenu);	
+ 		rev.setForeground(Color.BLACK);
+ 		rev.setBackground(Color.WHITE);
 
  		Paneau_buttons.add(List_pat); 
  		Paneau_buttons.add(List_rv);
  		Paneau_buttons.add(list_stat); 	
+ 		
+ 		Paneau_Center.add(date_disp,BorderLayout.PAGE_START);
+// 		Paneau_South.add(nbr_rdv,BorderLayout.LINE_END);
+ 		Paneau_South.add(rev);
+ 		Paneau_South.add(nbr_rdv);
+
  	}
  
  	public home() {
@@ -92,7 +146,7 @@ public class home extends JFrame implements ActionListener  {
  		
 		this.setTitle("projet Cabinet Dentaire - JAVA -");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(Ecran.width-250,Ecran.height-250);
+		this.setSize(Ecran.width-250,Ecran.height-220);
 		this.setLocationRelativeTo(null);
 		this.getContentPane().setLayout(new BorderLayout());
 		//panel
@@ -100,8 +154,15 @@ public class home extends JFrame implements ActionListener  {
 		this.getContentPane().add(Paneau_North,BorderLayout.NORTH);
 		this.getContentPane().add(Paneau_West,BorderLayout.WEST);
 		this.getContentPane().add(Paneau_Center,BorderLayout.CENTER);
+		this.getContentPane().add(Paneau_South,BorderLayout.SOUTH);
+
 		initLabel();
-		initButtons();
+		try {
+			initButtons();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 	@Override
@@ -116,6 +177,17 @@ public class home extends JFrame implements ActionListener  {
 				e1.printStackTrace();
 			}
 		}
+		if(e.getSource() == List_rv) {
+			Liste_RV lrv = new Liste_RV();
+			lrv.setVisible(true);
+			this.dispose();
+		}
+		if(e.getSource() == list_stat) {
+			Statistiques st = new Statistiques();
+			st.setVisible(true);
+			this.dispose();
+		}
+		
 	}
 
 }

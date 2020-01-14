@@ -16,10 +16,10 @@ public class Test {
 		}
 		INTRO.dispose();
 */
-//		home h = new home();
-		Liste_patientes p = new Liste_patientes();
-		p.setVisible(true);
-//		h.setVisible(true);
+		home h = new home();
+//		Liste_patientes p = new Liste_patientes();
+//		p.setVisible(true);
+		h.setVisible(true);
 //		ajouter_data d = new ajouter_data();
 //		d.setVisible(true);
 	}

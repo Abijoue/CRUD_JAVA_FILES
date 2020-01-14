@@ -18,7 +18,7 @@ import javaBeans.Patient;
 @SuppressWarnings("serial")
 public class ajouter_actes extends JFrame implements ActionListener {
 	Container container = getContentPane();
-	JLabel ActesLabel = new JLabel("liste des actes");
+	JLabel ActesLabel ;
 	String elements[] = {
 			"SOINS DENTAIRES de CONSERVATEURS",
 			"SOINS DENTAIRES de PROPHYLAXIE BUCCO-DENTAIRE",
@@ -31,24 +31,45 @@ public class ajouter_actes extends JFrame implements ActionListener {
 			"Prothèses adjointes",
 			"Parodontologie",
 			"Implantologie"
-			};
+			}; 
+	
 	JButton saveButton , cancelButton ;
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	JComboBox Actes_list = new JComboBox(elements); 
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"rawtypes"})
+	JComboBox Actes_list , tooth_list ;
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	void initJComboBox() {
+		 Actes_list = new JComboBox(elements);
+		 container.add(Actes_list);
+		 
+		 Actes_list.setBounds(50, 80, 400, 30);
+
+	}
+	
+	void initJlabel() {
+		ActesLabel = new JLabel("liste des actes");
+		container.add(ActesLabel);
+		ActesLabel.setBounds(50, 40, 100, 30);
+
+	}
+
 	public void iniButton(String s) {
+		
 		saveButton = new JButton("Enregistrer - "+s);
 		cancelButton = new JButton("cancel");
+		
 		saveButton.setBounds(100, 140, 100, 30);
 		cancelButton.setBounds(250, 140, 100, 30);
 
 		saveButton.addActionListener(this);
 		cancelButton.addActionListener(this);
+		
 		container.add(saveButton);
 		container.add(cancelButton);
 
-
 	}
+
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
@@ -62,38 +83,32 @@ public class ajouter_actes extends JFrame implements ActionListener {
 			Date date = new Date();
 			Paiement pai = new Paiement(prix(), date);
 			Acte c = new Acte((String) Actes_list.getSelectedItem(), prix());
+			String cin = s.split("-", 2)[1].trim();
+			//System.out.println(cin);
 		try {
-			FileWriter(s.split("-", 2)[1].trim(),c,pai);
+			FileWriter(cin,c,pai);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+		if(Actes_list.getSelectedItem() == "CHIRURGIE BUCCALE - Extractions de dents temporaires" ||
+				   Actes_list.getSelectedItem() == "CHIRURGIE BUCCALE - Extractions de dents permanentes" ||
+				   Actes_list.getSelectedItem() == "Prothèses conjointes" ||
+				   Actes_list.getSelectedItem() == "Prothèses adjointes" ||
+				   Actes_list.getSelectedItem() == "Implantologie") {
+							add_tooth_actes ad = new add_tooth_actes(cin , Actes_list.getSelectedItem().toString());
+							ad.setVisible(true);
+				}
 	           this.dispose(); 		
-	           
-	}
-	
-
+		}
 		
+
+	
 	}
 	
 	public void setLayoutManager() {
 	container.setLayout(null);
 	}
-	public void setLocationAndSize() {
-			
 	
-	ActesLabel.setBounds(50, 40, 100, 30);
-	Actes_list.setBounds(50, 80, 400, 30);
-	
-
-}
-	public void addComponentsToContainer() {
-	
-		container.add(ActesLabel);
-		container.add(Actes_list);
-				
-		
-	}
-
 	public double prix() {
 		String selected = (String) Actes_list.getSelectedItem();
 		if (selected.equals(elements[0]) || selected.equals(elements[1]) || selected.equals(elements[2])) {
@@ -116,12 +131,8 @@ public class ajouter_actes extends JFrame implements ActionListener {
 		return 10000;
 	}
 	
-		
+public void FileWriter(String s ,Acte c , Paiement pai) throws IOException{
 	
-	
-@SuppressWarnings("resource")
-public void FileWriter(String s ,Acte c , Paiement pai) throws IOException 
-{
     String fileContent_actes = c.toString();
     String fileContent_paiement = pai.toString();
 
@@ -130,7 +141,6 @@ public void FileWriter(String s ,Acte c , Paiement pai) throws IOException
     file_actes.createNewFile();
     file_paiement.createNewFile();
 
-    //Create the file
     try {
             //Write Content actes
             FileWriter writer = new FileWriter(file_actes,true);
@@ -156,13 +166,12 @@ public void FileWriter(String s ,Acte c , Paiement pai) throws IOException
 
 	public ajouter_actes(Patient p){
 		String s = p.getCin();
-		addComponentsToContainer();
 		iniButton(s);
+		initJComboBox();
 		setLayoutManager();
-		setLocationAndSize();
 		setTitle("ajouter actes");
 		setVisible(true);
-	    setBounds(20, 70, 500, 300);
+	    setBounds(20, 70, 700, 300);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 	}
